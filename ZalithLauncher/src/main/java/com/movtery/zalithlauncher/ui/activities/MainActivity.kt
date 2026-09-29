@@ -74,10 +74,6 @@ import com.movtery.zalithlauncher.ui.screens.content.navigateToLogView
 import com.movtery.zalithlauncher.ui.screens.content.navigateToWeb
 import com.movtery.zalithlauncher.ui.screens.main.MainScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.movtery.zalithlauncher.auth.AuthGateState
-import com.movtery.zalithlauncher.auth.NuxAuthManager
-import com.movtery.zalithlauncher.auth.NuxAuthScreen
-import com.movtery.zalithlauncher.auth.NuxActivationScreen
 import com.movtery.zalithlauncher.ui.screens.main.crashlogs.LogShareMenu
 import com.movtery.zalithlauncher.ui.screens.main.crashlogs.LogShareMenuOperation
 import com.movtery.zalithlauncher.ui.screens.main.crashlogs.ShareLinkOperation
@@ -332,7 +328,6 @@ class MainActivity : BaseAppCompatActivity() {
                 festivals = festivals
             ) {
                 ObserveFullScreenSetting(AllSettings.launcherFullScreen.state)
-                val authGateState by NuxAuthManager.authState.collectAsStateWithLifecycle()
 
                 Box {
                     Background(
@@ -340,30 +335,7 @@ class MainActivity : BaseAppCompatActivity() {
                         viewModel = backgroundViewModel
                     )
 
-                    when (val authState = authGateState) {
-                        is AuthGateState.Checking -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                androidx.compose.material3.CircularProgressIndicator(
-                                    color = androidx.compose.ui.graphics.Color(0xFF2E7D5B),
-                                    modifier = Modifier.size(44.dp)
-                                )
-                            }
-                        }
-                        is AuthGateState.Unauthenticated -> {
-                            NuxAuthScreen(
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                        is AuthGateState.NeedsActivation -> {
-                            NuxActivationScreen(
-                                user = authState.user,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                        is AuthGateState.Authenticated -> {
+                    run {
                             CompositionLocalProvider(
                                 LocalHomePageViewModel provides homePageViewModel
                             ) {
@@ -430,11 +402,10 @@ class MainActivity : BaseAppCompatActivity() {
                                     }
                                 )
                             }
-                        }
                     }
                 }
 
-                if (authGateState is AuthGateState.Authenticated) {
+                run {
 
                 //显示赞助支持的小弹窗
                 if (!isImporting && finishedGame.state >= 100 && showSponsorship.state) {
