@@ -65,8 +65,6 @@ class ZLApplication : Application(), SingletonImageLoader.Factory {
             //停止所有任务
             TaskSystem.stopAll()
             try {
-                com.movtery.zalithlauncher.social.NuxSocialManager.leaveVoiceRoomBlocking()
-                com.movtery.zalithlauncher.social.NuxSocialManager.updateMyPresenceBlocking("offline")
             } catch (_: Exception) {}
 
             val throwable = if (th is SplashException) th.cause!!
